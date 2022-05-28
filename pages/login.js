@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 export default function login() {
   return (
-    <div className="grid items-center w-full grid-rows-3 md:h-80 h-72">
+    <div className="grid items-center w-full h-full grid-rows-3 gap-5 md:gap-10">
       <Head>
         <title>Login</title>
       </Head>
