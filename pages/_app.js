@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }) {
       <Component {...pageProps} />
       <footer className="flex items-center justify-center py-5 mt-10 border-t-2 border-slate-800">
         <p>
-          Made with ? By{' '}
+          Made with ❤ By{' '}
           <a
             className="underline text-sky-700 hover:text-sky-400"
             href="https://elbi.vercel.app"
