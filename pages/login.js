@@ -17,11 +17,9 @@ const schema = Yup.object({
   password: Yup.string()
     .min(5, 'MIN 5 LENGTH')
     .max(100, 'MAX 100 LENGTH')
-
     .required('PLEASE INSERT YOUR PASSWORD'),
 }).required();
-// password
-/* 
+/* password
       .matches(
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
       `please enter a password with a minimum length of 8 letters, consisting of at least one letter, at least one number and at least one special letter`,
@@ -32,7 +30,7 @@ export default function Login() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) });
+  } = useForm({ resolver: yupResolver(schema), mode: 'onSubmit' });
   const dispatch = useDispatch();
   const auth = useAuth(true, '/');
 
@@ -64,80 +62,72 @@ export default function Login() {
       });
   });
   return (
-    <React.Fragment>
-      {/* <div className="mb-5 overflow-hidden transition bg-blue-900 rounded">
-        <div className="p-5 ">
-          lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem
-          lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem
-          lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem
-          lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem
-          lorem lorem lorem lorem
-        </div>
-      </div> */}
-      <form
-        onClick={formHandler}
-        className="grid items-center w-full h-full grid-rows-3 gap-5 md:gap-10"
-      >
-        <Head>
-          <title>Login</title>
-        </Head>
+    <form
+      onSubmit={formHandler}
+      className="grid items-center w-full h-full grid-rows-3 gap-5 md:gap-10"
+    >
+      <Head>
+        <title>Login</title>
+      </Head>
 
-        <div className="flex flex-col">
-          <label
-            className="font-bold text-md md:text-xl text-cyan-500"
-            htmlFor="email"
-          >
-            Email {' : '}
-          </label>
-          <input
-            className="mt-1 border-0 rounded shadow-xl invalid:border-1 invalid:border-pink-900 md:mt-3 bg-slate-800 focus:ring-1 focus:ring-slate-900"
-            type="email"
-            id="email"
-            {...register('email')}
-          />
-          {errors.email?.message && (
-            <p className="mt-1 text-sm font-bold text-red-900 md:text-md md:mt-3">
-              {errors.email?.message}
-            </p>
-          )}
-        </div>
-
-        <div className="flex flex-col">
-          <label
-            className="font-bold text-md md:text-xl text-cyan-500"
-            htmlFor="password"
-          >
-            Password {' : '}
-          </label>
-          <input
-            className="mt-1 border-0 rounded shadow-xl md:mt-3 bg-slate-800 focus:ring-1 focus:ring-slate-900"
-            type="password"
-            id="password"
-            {...register('password')}
-          />
-          {errors.password?.message && (
-            <p className="mt-1 text-sm font-bold text-red-900 md:text-md md:mt-3">
-              {errors.password?.message}
-            </p>
-          )}
-        </div>
-
-        <div className="grid items-center grid-cols-1 grid-rows-2 gap-1">
-          <button className="px-3 py-1 font-bold rounded-md shadow-md md:px-5 md:py-2 hover:bg-sky-600 bg-sky-700">
-            Login
-          </button>
-          <p className="text-sm text-center md:text-md">
-            Don&apos;t have an account yet?
-            <Link href="/register">
-              <a className="text-sky-700 hover:text-sky-400 hover:underline">
-                {' '}
-                click here{' '}
-              </a>
-            </Link>
-            to go to account list page
+      <div className="flex flex-col">
+        <label
+          className="font-bold text-md md:text-xl text-cyan-500"
+          htmlFor="email"
+        >
+          Email {' : '}
+        </label>
+        <input
+          className="mt-1 border-0 rounded shadow-xl invalid:border-1 invalid:border-pink-900 md:mt-3 bg-slate-800 focus:ring-1 focus:ring-slate-900"
+          type="email"
+          id="email"
+          {...register('email')}
+        />
+        {errors.email?.message && (
+          <p className="mt-1 text-sm font-bold text-red-900 md:text-md md:mt-3">
+            {errors.email?.message}
           </p>
-        </div>
-      </form>
-    </React.Fragment>
+        )}
+      </div>
+
+      <div className="flex flex-col">
+        <label
+          className="font-bold text-md md:text-xl text-cyan-500"
+          htmlFor="password"
+        >
+          Password {' : '}
+        </label>
+        <input
+          className="mt-1 border-0 rounded shadow-xl md:mt-3 bg-slate-800 focus:ring-1 focus:ring-slate-900"
+          type="password"
+          id="password"
+          {...register('password')}
+        />
+        {errors.password?.message && (
+          <p className="mt-1 text-sm font-bold text-red-900 md:text-md md:mt-3">
+            {errors.password?.message}
+          </p>
+        )}
+      </div>
+
+      <div className="grid items-center grid-cols-1 grid-rows-2 gap-1">
+        <button
+          type="submit"
+          className="px-3 py-1 font-bold rounded-md shadow-md md:px-5 md:py-2 hover:bg-sky-600 bg-sky-700"
+        >
+          Login
+        </button>
+        <p className="text-sm text-center md:text-md">
+          Don&apos;t have an account yet?
+          <Link href="/register">
+            <a className="text-sky-700 hover:text-sky-400 hover:underline">
+              {' '}
+              click here{' '}
+            </a>
+          </Link>
+          to go to account list page
+        </p>
+      </div>
+    </form>
   );
 }
