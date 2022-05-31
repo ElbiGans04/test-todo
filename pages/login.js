@@ -3,10 +3,17 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import useAuth from '../src/hooks/useAuth';
 import { login } from '../src/features/user/userSlice';
+import {
+  iddle,
+  loading,
+  error,
+  statusSelector,
+} from '../src/features/status/statusSlice';
+import { useSelector } from 'react-redux';
 
 const schema = Yup.object({
   email: Yup.string()
@@ -33,11 +40,15 @@ export default function Login() {
   } = useForm({ resolver: yupResolver(schema), mode: 'onSubmit' });
   const dispatch = useDispatch();
   const auth = useAuth(true, '/');
+  const status = useSelector(statusSelector);
 
   /* 
     Event Handler
   */
   const formHandler = handleSubmit((data) => {
+    if (status !== 'iddle') return;
+
+    dispatch(loading());
     fetch('https://todos.data.my.id/api/login', {
       method: 'POST',
       body: new URLSearchParams(data),
@@ -49,6 +60,7 @@ export default function Login() {
       })
       .then((res) => {
         alert('SUCCESS LOGIN. WILL REDIRECT');
+        dispatch(iddle());
         dispatch(
           login({
             token: res.access_token,
@@ -58,9 +70,24 @@ export default function Login() {
         );
       })
       .catch((err) => {
+        dispatch(error());
         alert(err);
       });
   });
+
+  if (status === 'error')
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <p className="text-xl font-bold text-red-500 xl:text-2xl">
+          ERROR FOUND
+        </p>
+        <br></br>
+        <p className="text-sm font-bold text-red-500 xl:text-md">
+          PLEASE RELOAD THE PAGE
+        </p>
+      </div>
+    );
+
   return (
     <form
       onSubmit={formHandler}
@@ -114,8 +141,9 @@ export default function Login() {
         <button
           type="submit"
           className="px-3 py-1 font-bold rounded-md shadow-md md:px-5 md:py-2 hover:bg-sky-600 bg-sky-700"
+          disabled={status !== 'iddle' ? true : false}
         >
-          Login
+          {status === 'iddle' ? 'Login' : 'Loading...'}
         </button>
         <p className="text-sm text-center md:text-md">
           Don&apos;t have an account yet?
