@@ -9,16 +9,16 @@ export const statusSlice = createSlice({
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
     iddle: (state) => {
-      state = 'iddle';
+      return 'iddle';
     },
     loading: (state) => {
-      state = 'loading';
+      return 'loading';
     },
     error: (state) => {
-      state = 'error';
+      return 'error';
     },
     success: (state) => {
-      state = 'success';
+      return 'success';
     },
   },
 });
