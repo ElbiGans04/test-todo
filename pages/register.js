@@ -6,6 +6,14 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch } from 'react-redux';
 import useAuth from '../src/hooks/useAuth';
 import { login } from '../src/features/user/userSlice';
+import {
+  iddle,
+  loading,
+  error,
+  statusSelector,
+} from '../src/features/status/statusSlice';
+import { useSelector } from 'react-redux';
+
 const schema = Yup.object({
   name: Yup.string()
     .min(5, 'MIN 5 LENGTH')
@@ -35,12 +43,15 @@ export default function Register() {
   } = useForm({ resolver: yupResolver(schema) });
   const dispatch = useDispatch();
   const auth = useAuth(true, '/');
+  const status = useSelector(statusSelector);
 
   /* 
     Event Handler
   */
 
   const formHandler = handleSubmit((data) => {
+    if (status !== 'iddle') return;
+    dispatch(loading());
     fetch('https://todos.data.my.id/api/register', {
       method: 'POST',
       body: new URLSearchParams(data),
@@ -56,6 +67,7 @@ export default function Register() {
           res.email[0] === 'The email has already been taken.'
         )
           throw new Error('The email has already been taken');
+        dispatch(iddle());
         alert('SUCCESS REGISTER. WILL REDIRECT');
         dispatch(
           login({
@@ -66,9 +78,23 @@ export default function Register() {
         );
       })
       .catch((err) => {
+        dispatch(error());
         alert(err);
       });
   });
+
+  if (status === 'error')
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <p className="text-xl font-bold text-red-500 xl:text-2xl">
+          ERROR FOUND
+        </p>
+        <br></br>
+        <p className="text-sm font-bold text-red-500 xl:text-md">
+          PLEASE RELOAD THE PAGE
+        </p>
+      </div>
+    );
 
   return (
     <form
@@ -163,8 +189,9 @@ export default function Register() {
         <button
           type="submit"
           className="px-3 py-1 font-bold rounded-md shadow-md md:px-5 md:py-2 hover:bg-sky-600 bg-sky-700"
+          disabled={status === 'loading' ? true : false}
         >
-          Register
+          {status !== 'loading' ? 'Register' : 'Loading...'}
         </button>
         <p className="text-sm text-center md:text-md">
           Already have an account?
