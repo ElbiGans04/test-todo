@@ -50,7 +50,7 @@ export default function Register() {
   */
 
   const formHandler = handleSubmit((data) => {
-    if (status.name !== 'iddle') return;
+    if (status.name === 'loading') return;
     dispatch(loading());
     fetch('https://todos.data.my.id/api/register', {
       method: 'POST',
@@ -82,19 +82,6 @@ export default function Register() {
         alert(err);
       });
   });
-
-  if (status === 'error')
-    return (
-      <div className="flex flex-col items-center justify-center w-full h-full">
-        <p className="text-xl font-bold text-red-500 xl:text-2xl">
-          ERROR FOUND
-        </p>
-        <br></br>
-        <p className="text-sm font-bold text-red-500 xl:text-md">
-          PLEASE RELOAD THE PAGE
-        </p>
-      </div>
-    );
 
   return (
     <form

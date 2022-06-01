@@ -46,7 +46,7 @@ export default function Login() {
     Event Handler
   */
   const formHandler = handleSubmit((data) => {
-    if (status.name !== 'iddle') return;
+    if (status.name === 'loading') return;
 
     dispatch(loading());
     fetch('https://todos.data.my.id/api/login', {
@@ -74,19 +74,6 @@ export default function Login() {
         alert(err);
       });
   });
-
-  if (status === 'error')
-    return (
-      <div className="flex flex-col items-center justify-center w-full h-full">
-        <p className="text-xl font-bold text-red-500 xl:text-2xl">
-          ERROR FOUND
-        </p>
-        <br></br>
-        <p className="text-sm font-bold text-red-500 xl:text-md">
-          PLEASE RELOAD THE PAGE
-        </p>
-      </div>
-    );
 
   return (
     <form
@@ -141,9 +128,9 @@ export default function Login() {
         <button
           type="submit"
           className="px-3 py-1 font-bold rounded-md shadow-md md:px-5 md:py-2 hover:bg-sky-600 bg-sky-700"
-          disabled={status.name !== 'iddle' ? true : false}
+          disabled={status.name === 'loading' ? true : false}
         >
-          {status.name === 'iddle' ? 'Login' : 'Loading...'}
+          {status.name !== 'loading' ? 'Login' : 'Loading...'}
         </button>
         <p className="text-sm text-center md:text-md">
           Don&apos;t have an account yet?
