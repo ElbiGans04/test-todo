@@ -17,13 +17,13 @@ export const statusSlice = createSlice({
     loading: (state) => {
       state.name = 'loading';
     },
-    error: (state, payload) => {
+    error: (state, action) => {
       state.name = 'error';
-      state.message = payload.message;
+      state.message = action.payload.message;
     },
-    success: (state, payload) => {
+    success: (state, action) => {
       state.name = 'success';
-      state.message = payload.message;
+      state.message = action.payload.message;
     },
   },
 });
