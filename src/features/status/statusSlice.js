@@ -1,7 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 // iddle, loading, success, error
-const initialState = 'iddle';
+const initialState = {
+  name: 'iddle',
+  message: null,
+};
 
 export const statusSlice = createSlice({
   name: 'status',
@@ -9,16 +12,18 @@ export const statusSlice = createSlice({
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
     iddle: (state) => {
-      return 'iddle';
+      state.name = 'iddle';
     },
     loading: (state) => {
-      return 'loading';
+      state.name = 'loading';
     },
-    error: (state) => {
-      return 'error';
+    error: (state, payload) => {
+      state.name = 'error';
+      state.message = payload.message;
     },
-    success: (state) => {
-      return 'success';
+    success: (state, payload) => {
+      state.name = 'success';
+      state.message = payload.message;
     },
   },
 });
