@@ -50,7 +50,7 @@ export default function Register() {
   */
 
   const formHandler = handleSubmit((data) => {
-    if (status !== 'iddle') return;
+    if (status.name !== 'iddle') return;
     dispatch(loading());
     fetch('https://todos.data.my.id/api/register', {
       method: 'POST',
@@ -189,9 +189,9 @@ export default function Register() {
         <button
           type="submit"
           className="px-3 py-1 font-bold rounded-md shadow-md md:px-5 md:py-2 hover:bg-sky-600 bg-sky-700"
-          disabled={status === 'loading' ? true : false}
+          disabled={status.name === 'loading' ? true : false}
         >
-          {status !== 'loading' ? 'Register' : 'Loading...'}
+          {status.name !== 'loading' ? 'Register' : 'Loading...'}
         </button>
         <p className="text-sm text-center md:text-md">
           Already have an account?

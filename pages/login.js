@@ -46,7 +46,7 @@ export default function Login() {
     Event Handler
   */
   const formHandler = handleSubmit((data) => {
-    if (status !== 'iddle') return;
+    if (status.name !== 'iddle') return;
 
     dispatch(loading());
     fetch('https://todos.data.my.id/api/login', {
@@ -141,9 +141,9 @@ export default function Login() {
         <button
           type="submit"
           className="px-3 py-1 font-bold rounded-md shadow-md md:px-5 md:py-2 hover:bg-sky-600 bg-sky-700"
-          disabled={status !== 'iddle' ? true : false}
+          disabled={status.name !== 'iddle' ? true : false}
         >
-          {status === 'iddle' ? 'Login' : 'Loading...'}
+          {status.name === 'iddle' ? 'Login' : 'Loading...'}
         </button>
         <p className="text-sm text-center md:text-md">
           Don&apos;t have an account yet?
