@@ -224,23 +224,21 @@ function Todos({ setRefetch, refetch, auth }) {
       setRefetch(false);
       dispatch(loading());
 
-      setTimeout(async () => {
-        const request = await fetch('https://todos.data.my.id/api/todos', {
-          headers: {
-            Authorization: `Bearer ${auth.user.token}`,
-          },
-        });
+      const request = await fetch('https://todos.data.my.id/api/todos', {
+        headers: {
+          Authorization: `Bearer ${auth.user.token}`,
+        },
+      });
 
-        if (!request.ok)
-          return dispatch(
-            error({ message: 'Error When trying to request data' }),
-          );
+      if (!request.ok)
+        return dispatch(
+          error({ message: 'Error When trying to request data' }),
+        );
 
-        const requestJson = await request.json();
+      const requestJson = await request.json();
 
-        dispatch(changeTodos({ todos: requestJson.data }));
-        dispatch(success({ message: null }));
-      }, 3000);
+      dispatch(changeTodos({ todos: requestJson.data }));
+      dispatch(success({ message: null }));
     }
 
     fetchData().catch((err) => console.error(err));
