@@ -22,4 +22,6 @@ export const todosSlice = createSlice({
 export const { changeTodos, changeTodosFilter } = todosSlice.actions;
 export default todosSlice.reducer;
 
-export const todosSelector = (state) => state.filter;
+export const todosSelector = (state) => state.todos;
+export const todosDataSelector = (state) => state.todos.data;
+export const todosDataFilterSelector = (state) => state.todos.dataFilter;
