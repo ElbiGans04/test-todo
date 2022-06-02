@@ -1,7 +1,8 @@
 import Head from 'next/head';
 import { RiPencilLine } from 'react-icons/ri';
-import { AiFillPlusCircle, AiFillDelete } from 'react-icons/ai';
+import { AiFillEye, AiFillDelete } from 'react-icons/ai';
 import useAuth from '../src/hooks/useAuth';
+import { CONSTANT_KIND_FILTER } from '../src/features/filter/filterSlice';
 
 const data = [
   {
@@ -67,7 +68,7 @@ export default function Home() {
               <input
                 className="mt-1 border-0 rounded shadow-xl md:mt-3 bg-slate-800 focus:ring-1 focus:ring-slate-900"
                 type="password"
-                id="email"
+                id="password"
               />
             </div>
 
@@ -116,11 +117,13 @@ export default function Home() {
         </button>
 
         <select className="border-0 rounded bg-slate-900 focus:outline-0">
-          <option className="hover:bg-red-700" value="">
-            Compelete
-          </option>
-          <option value="">UnComplate</option>
-          <option value="">bbb</option>
+          {CONSTANT_KIND_FILTER.map((val) => {
+            return (
+              <option value={val} key={val}>
+                {val}
+              </option>
+            );
+          })}
         </select>
       </div>
 
@@ -154,6 +157,9 @@ export default function Home() {
                   </label>
                 </div>
                 <div className="flex items-center mt-3 md:mt-0">
+                  <button className="flex items-center justify-between px-3 py-1 mr-2 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
+                    <AiFillEye className="mr-1"></AiFillEye>Active
+                  </button>
                   <button className="flex items-center justify-between px-3 py-1 mr-2 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
                     <AiFillDelete className="mr-1"></AiFillDelete>Delete
                   </button>
