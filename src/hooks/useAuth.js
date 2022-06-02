@@ -21,4 +21,16 @@ export default function useAuth(ifFound, destination) {
       });
     }
   }, [data, router, ifFound, destination]);
+
+  return {
+    isLogin: data.token && data.name && data.email ? true : false,
+    user:
+      data.token && data.name && data.email
+        ? {
+            token: data.token,
+            name: data.name,
+            email: data.email,
+          }
+        : false,
+  };
 }
