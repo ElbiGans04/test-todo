@@ -2,8 +2,18 @@ import Head from 'next/head';
 import { RiPencilLine } from 'react-icons/ri';
 import { AiFillEye, AiFillDelete } from 'react-icons/ai';
 import useAuth from '../src/hooks/useAuth';
-import { CONSTANT_KIND_FILTER } from '../src/features/filter/filterSlice';
+import {
+  CONSTANT_KIND_FILTER,
+  all,
+  active,
+  notActive,
+  completed,
+  tooLate,
+  whichWillCome,
+  filterSelector,
+} from '../src/features/filter/filterSlice';
 import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 const data = [
   {
@@ -119,13 +129,49 @@ export default function Home() {
 }
 
 function Header() {
+  const filter = useSelector(filterSelector);
+  const dispatch = useDispatch();
+  /* 
+    Event Handler
+  */
+  const handler = (event) => {
+    const optionValue = event.currentTarget.value;
+    if (!CONSTANT_KIND_FILTER.includes(optionValue)) return false;
+
+    // By Condition
+    switch (optionValue) {
+      case 'all':
+        dispatch(all());
+        break;
+      case 'active':
+        dispatch(active());
+        break;
+      case 'notActive':
+        dispatch(notActive());
+        break;
+      case 'completed':
+        dispatch(completed());
+        break;
+      case 'tooLate':
+        dispatch(tooLate());
+        break;
+      case 'whichWillCome':
+        dispatch(whichWillCome());
+        break;
+    }
+  };
+
   return (
     <div className="flex justify-between w-full p-5 rounded bg-slate-800">
       <button className="px-1 py-1 font-bold rounded-md shadow-md md:px-5 md:py-2 hover:bg-slate-700 bg-slate-900">
         Add Todo
       </button>
 
-      <select className="border-0 rounded bg-slate-900 focus:outline-0">
+      <select
+        value={filter}
+        onChange={handler}
+        className="border-0 rounded bg-slate-900 focus:outline-0"
+      >
         {CONSTANT_KIND_FILTER.map((val) => {
           return (
             <option value={val} key={val}>
