@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { RiPencilLine } from 'react-icons/ri';
-import { AiFillEye, AiFillDelete } from 'react-icons/ai';
+import { AiFillEye, AiFillDelete, AiOutlineLoading } from 'react-icons/ai';
 import useAuth from '../src/hooks/useAuth';
 import {
   CONSTANT_KIND_FILTER,
@@ -11,34 +11,23 @@ import {
   tooLate,
   whichWillCome,
   todosFilterSelector,
+  todosDataFilterSelector,
+  changeTodos,
 } from '../src/features/todos/todosSlice';
-import { useEffect } from 'react';
+import {
+  statusSelector,
+  loading,
+  success,
+  iddle,
+  error,
+} from '../src/features/status/statusSlice';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-const data = [
-  {
-    title: 'this title todo 1',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa tincidunt nunc pulvinar sapien et ligula ullamcorper malesuada proin. Non nisi est sit amet facilisis. Lacinia at quis risus sed vulputate odio ut enim blandit. Sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque',
-    start: '2022-02-24 00:00:00',
-    end: '2022-02-25 00:00:00',
-  },
-  {
-    title: 'this title todo 2',
-    description: 'this title 2 description',
-    start: '2022-02-02 00:00:00',
-    end: '2022-02-11 00:00:00',
-  },
-  {
-    title: 'this title todo 3',
-    description: 'this title 3 description',
-    start: '2022-02-05 00:00:00',
-    end: '2022-02-12 00:00:00',
-  },
-];
+import { createSelector } from '@reduxjs/toolkit';
 
 export default function Home() {
   const auth = useAuth(false, '/login');
+  const [refetch, setRefetch] = useState(true);
 
   return (
     <div className="grid w-full h-full gap-5 grid-columns-10">
@@ -122,14 +111,15 @@ export default function Home() {
         </div>
       </div> */}
 
-      <Header />
-      <Todos auth={auth} />
+      <Header refetch={refetch} setRefetch={setRefetch} />
+      <Todos refetch={refetch} setRefetch={setRefetch} auth={auth} />
     </div>
   );
 }
 
-function Header() {
+function Header({ setRefetch, refetch }) {
   const filter = useSelector(todosFilterSelector);
+  const status = useSelector(statusSelector);
   const dispatch = useDispatch();
   /* 
     Event Handler
@@ -167,66 +157,127 @@ function Header() {
         Add Todo
       </button>
 
-      <select
-        value={filter}
-        onChange={handler}
-        className="border-0 rounded bg-slate-900 focus:outline-0"
-      >
-        {CONSTANT_KIND_FILTER.map((val) => {
-          return (
-            <option value={val} key={val}>
-              {val}
-            </option>
-          );
-        })}
-      </select>
+      <div className="flex items-center">
+        <button
+          onClick={() => setRefetch(true)}
+          className="flex items-center justify-between px-3 py-1 font-bold rounded-md shadow-md bg-slate-900 md:px-5 md:py-2 hover:bg-slate-700"
+        >
+          <span
+            className={
+              status.name === 'loading' && refetch
+                ? 'mr-3 animate-spin'
+                : 'mr-3'
+            }
+          >
+            <AiOutlineLoading />
+          </span>
+          Reload Todos
+        </button>
+        <select
+          value={filter}
+          onChange={handler}
+          className="ml-5 border-0 rounded hover:bg-slate-700 bg-slate-900 focus:outline-0"
+        >
+          {CONSTANT_KIND_FILTER.map((val) => {
+            return (
+              <option value={val} key={val}>
+                {val}
+              </option>
+            );
+          })}
+        </select>
+      </div>
     </div>
   );
 }
 
-function Todos() {
+function Todos({ setRefetch, refetch, auth }) {
+  const dispatch = useDispatch();
+  const todosId = createSelector(todosDataFilterSelector, (todos) =>
+    todos.map((todo) => todo.id),
+  );
+  const todosIdVal = useSelector(todosId);
+  const status = useSelector(statusSelector);
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!auth.isLogin) return;
+      if (status.name !== 'iddle' && status.name !== 'success') return;
+      if (!refetch) return;
+
+      setRefetch(false);
+      dispatch(loading());
+
+      setTimeout(async () => {
+        const request = await fetch('https://todos.data.my.id/api/todos', {
+          headers: {
+            Authorization: `Bearer ${auth.user.token}`,
+          },
+        });
+
+        if (!request.ok)
+          return dispatch(
+            error({ message: 'Error When trying to request data' }),
+          );
+
+        const requestJson = await request.json();
+
+        dispatch(changeTodos({ todos: requestJson.data }));
+        dispatch(success({ message: null }));
+      }, 3000);
+    }
+
+    fetchData().catch((err) => console.error(err));
+  }, [auth, dispatch, refetch, setRefetch, status]);
   return (
     <div className="grid gap-5">
-      {data.map((val, idx) => {
-        return (
-          <div
-            key={idx}
-            className="relative grid gap-10 p-5 rounded bg-slate-800"
-          >
-            <div>
-              <h1 className="mb-3 text-xl font-bold lg:text-3xl md:text-2xl">
-                {val.title}
-              </h1>
-              <p className="text-base md:text-md lg:text-xl ">
-                {val.description}
-              </p>
-            </div>
-            <div className="flex flex-col justify-between md:flex-row">
-              <div className="flex items-center mr-3">
-                <input
-                  id={`finsih-${idx}`}
-                  type="checkbox"
-                  className="flex-col lg:w-5 lg:h-5 w-4 h-4 mr-3 rounded-[50%] focus:ring-offset-0 focus:border-0"
-                />
-                <label className="text-sm md:text-md" htmlFor={`finsih-${idx}`}>
-                  Mark This Todo done
-                </label>
-              </div>
-              <div className="flex items-center mt-3 md:mt-0">
-                <button className="flex items-center justify-between px-3 py-1 mr-2 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
-                  <AiFillEye className="mr-1"></AiFillEye>Active
-                </button>
-                <button className="flex items-center justify-between px-3 py-1 mr-2 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
-                  <AiFillDelete className="mr-1"></AiFillDelete>Delete
-                </button>
-                <button className="flex items-center justify-between px-3 py-1 font-bold rounded-md shadow-md bg-sky-700 md:px-5 md:py-2 hover:bg-sky-600">
-                  <AiFillDelete className="mr-1"></AiFillDelete>Update
-                </button>
-              </div>
-            </div>
-          </div>
-        );
+      {todosIdVal.map((val, idx) => {
+        return <Todo key={val} id={val} />;
       })}
+    </div>
+  );
+}
+
+function Todo({ id }) {
+  const dispatch = useDispatch();
+  const todosId = createSelector(todosDataFilterSelector, (todos) =>
+    todos.find((todo) => todo.id === id),
+  );
+  const todoVal = useSelector(todosId);
+
+  return (
+    <div className="relative grid gap-10 p-5 rounded bg-slate-800">
+      <div>
+        <h1 className="mb-3 text-xl font-bold lg:text-3xl md:text-2xl">
+          {todoVal.title}
+        </h1>
+        <p className="text-base md:text-md lg:text-xl ">
+          {todoVal.description}
+        </p>
+      </div>
+      <div className="flex flex-col justify-between md:flex-row">
+        <div className="flex items-center mr-3">
+          <input
+            id={`finsih-${id}`}
+            type="checkbox"
+            className="flex-col lg:w-5 lg:h-5 w-4 h-4 mr-3 rounded-[50%] focus:ring-offset-0 focus:border-0"
+          />
+          <label className="text-sm md:text-md" htmlFor={`finsih-${id}`}>
+            Mark This Todo done
+          </label>
+        </div>
+        <div className="flex items-center mt-3 md:mt-0">
+          <button className="flex items-center justify-between px-3 py-1 mr-2 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
+            <AiFillEye className="mr-1"></AiFillEye>Active
+          </button>
+          <button className="flex items-center justify-between px-3 py-1 mr-2 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
+            <AiFillDelete className="mr-1"></AiFillDelete>Delete
+          </button>
+          <button className="flex items-center justify-between px-3 py-1 font-bold rounded-md shadow-md bg-sky-700 md:px-5 md:py-2 hover:bg-sky-600">
+            <AiFillDelete className="mr-1"></AiFillDelete>Update
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
