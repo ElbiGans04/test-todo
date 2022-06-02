@@ -3,6 +3,7 @@ import { RiPencilLine } from 'react-icons/ri';
 import { AiFillEye, AiFillDelete } from 'react-icons/ai';
 import useAuth from '../src/hooks/useAuth';
 import { CONSTANT_KIND_FILTER } from '../src/features/filter/filterSlice';
+import { useEffect } from 'react';
 
 const data = [
   {
@@ -111,67 +112,75 @@ export default function Home() {
         </div>
       </div> */}
 
-      <div className="flex justify-between w-full p-5 rounded bg-slate-800">
-        <button className="px-1 py-1 font-bold rounded-md shadow-md md:px-5 md:py-2 hover:bg-slate-700 bg-slate-900">
-          Add Todo
-        </button>
+      <Header />
+      <Todos auth={auth} />
+    </div>
+  );
+}
 
-        <select className="border-0 rounded bg-slate-900 focus:outline-0">
-          {CONSTANT_KIND_FILTER.map((val) => {
-            return (
-              <option value={val} key={val}>
-                {val}
-              </option>
-            );
-          })}
-        </select>
-      </div>
+function Header() {
+  return (
+    <div className="flex justify-between w-full p-5 rounded bg-slate-800">
+      <button className="px-1 py-1 font-bold rounded-md shadow-md md:px-5 md:py-2 hover:bg-slate-700 bg-slate-900">
+        Add Todo
+      </button>
 
-      <div className="grid gap-5">
-        {data.map((val, idx) => {
+      <select className="border-0 rounded bg-slate-900 focus:outline-0">
+        {CONSTANT_KIND_FILTER.map((val) => {
           return (
-            <div
-              key={idx}
-              className="relative grid gap-10 p-5 rounded bg-slate-800"
-            >
-              <div>
-                <h1 className="mb-3 text-xl font-bold lg:text-3xl md:text-2xl">
-                  {val.title}
-                </h1>
-                <p className="text-base md:text-md lg:text-xl ">
-                  {val.description}
-                </p>
-              </div>
-              <div className="flex flex-col justify-between md:flex-row">
-                <div className="flex items-center mr-3">
-                  <input
-                    id={`finsih-${idx}`}
-                    type="checkbox"
-                    className="flex-col lg:w-5 lg:h-5 w-4 h-4 mr-3 rounded-[50%] focus:ring-offset-0 focus:border-0"
-                  />
-                  <label
-                    className="text-sm md:text-md"
-                    htmlFor={`finsih-${idx}`}
-                  >
-                    Mark This Todo done
-                  </label>
-                </div>
-                <div className="flex items-center mt-3 md:mt-0">
-                  <button className="flex items-center justify-between px-3 py-1 mr-2 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
-                    <AiFillEye className="mr-1"></AiFillEye>Active
-                  </button>
-                  <button className="flex items-center justify-between px-3 py-1 mr-2 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
-                    <AiFillDelete className="mr-1"></AiFillDelete>Delete
-                  </button>
-                  <button className="flex items-center justify-between px-3 py-1 font-bold rounded-md shadow-md bg-sky-700 md:px-5 md:py-2 hover:bg-sky-600">
-                    <AiFillDelete className="mr-1"></AiFillDelete>Update
-                  </button>
-                </div>
-              </div>
-            </div>
+            <option value={val} key={val}>
+              {val}
+            </option>
           );
         })}
-      </div>
+      </select>
+    </div>
+  );
+}
+
+function Todos() {
+  return (
+    <div className="grid gap-5">
+      {data.map((val, idx) => {
+        return (
+          <div
+            key={idx}
+            className="relative grid gap-10 p-5 rounded bg-slate-800"
+          >
+            <div>
+              <h1 className="mb-3 text-xl font-bold lg:text-3xl md:text-2xl">
+                {val.title}
+              </h1>
+              <p className="text-base md:text-md lg:text-xl ">
+                {val.description}
+              </p>
+            </div>
+            <div className="flex flex-col justify-between md:flex-row">
+              <div className="flex items-center mr-3">
+                <input
+                  id={`finsih-${idx}`}
+                  type="checkbox"
+                  className="flex-col lg:w-5 lg:h-5 w-4 h-4 mr-3 rounded-[50%] focus:ring-offset-0 focus:border-0"
+                />
+                <label className="text-sm md:text-md" htmlFor={`finsih-${idx}`}>
+                  Mark This Todo done
+                </label>
+              </div>
+              <div className="flex items-center mt-3 md:mt-0">
+                <button className="flex items-center justify-between px-3 py-1 mr-2 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
+                  <AiFillEye className="mr-1"></AiFillEye>Active
+                </button>
+                <button className="flex items-center justify-between px-3 py-1 mr-2 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
+                  <AiFillDelete className="mr-1"></AiFillDelete>Delete
+                </button>
+                <button className="flex items-center justify-between px-3 py-1 font-bold rounded-md shadow-md bg-sky-700 md:px-5 md:py-2 hover:bg-sky-600">
+                  <AiFillDelete className="mr-1"></AiFillDelete>Update
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
