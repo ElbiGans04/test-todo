@@ -10,8 +10,8 @@ import {
   completed,
   tooLate,
   whichWillCome,
-  filterSelector,
-} from '../src/features/filter/filterSlice';
+  todosFilterSelector,
+} from '../src/features/todos/todosSlice';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -129,7 +129,7 @@ export default function Home() {
 }
 
 function Header() {
-  const filter = useSelector(filterSelector);
+  const filter = useSelector(todosFilterSelector);
   const dispatch = useDispatch();
   /* 
     Event Handler
