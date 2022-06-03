@@ -14,6 +14,8 @@ import {
   todosDataFilterSelector,
   todosDataSelector,
   changeTodos,
+  todosIdFilterSelector,
+  todoFilterSelector,
 } from '../src/features/todos/todosSlice';
 import {
   statusSelector,
@@ -209,10 +211,7 @@ function Header({ setRefetch, refetch }) {
 
 function Todos({ setRefetch, refetch, auth }) {
   const dispatch = useDispatch();
-  const todosId = createSelector(todosDataFilterSelector, (todos) =>
-    todos.map((todo) => todo.id),
-  );
-  const todosIdVal = useSelector(todosId);
+  const todosIdVal = useSelector(todosIdFilterSelector);
   const status = useSelector(statusSelector);
 
   useEffect(() => {
@@ -254,10 +253,7 @@ function Todos({ setRefetch, refetch, auth }) {
 
 function Todo({ id }) {
   const dispatch = useDispatch();
-  const todosId = createSelector(todosDataFilterSelector, (todos) =>
-    todos.find((todo) => todo.id === id),
-  );
-  const todoVal = useSelector(todosId);
+  const todoVal = useSelector(todoFilterSelector(id));
 
   return (
     <div className="relative grid gap-10 p-5 rounded bg-slate-800">

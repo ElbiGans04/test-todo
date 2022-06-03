@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 
 export const CONSTANT_KIND_FILTER = [
   'all',
@@ -67,3 +67,11 @@ export const todosSelector = (state) => state.todos;
 export const todosFilterSelector = (state) => state.todos.filter;
 export const todosDataSelector = (state) => state.todos.data;
 export const todosDataFilterSelector = (state) => state.todos.dataFilter;
+export const todosIdFilterSelector = createSelector(
+  todosDataFilterSelector,
+  (todos) => todos.map((todo) => todo.id),
+);
+export const todoFilterSelector = (id) =>
+  createSelector(todosDataFilterSelector, (todos) =>
+    todos.find((todo) => todo.id === id),
+  );
