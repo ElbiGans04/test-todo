@@ -22,8 +22,7 @@ export const todosSlice = createSlice({
   reducers: {
     changeTodos: (state, action) => {
       state.data = action.payload.todos;
-      state.dataFilter = action.payload.todos;
-      state['filter'] = 'all';
+      state.dataFilter = action.payload.dataFilter;
     },
     updateTodo: (state, action) => {
       const newState = [...state.data];
@@ -127,4 +126,39 @@ export const preparedUpdateTodo = (data, id) => (dispatch, getState) => {
   dispatch(
     updateTodo({ index: indexMatch, todo: data, dataFilter: finalTodos }),
   );
+};
+
+export const preparedChangeTodos = (todos) => (dispatch, getState) => {
+  const {
+    todos: { filter },
+  } = getState();
+  let finalTodos = [];
+
+  switch (filter) {
+    case 'all':
+      finalTodos = [...todos];
+      break;
+    case 'active': {
+      finalTodos = todos.filter((todo) => todo.status === 'active');
+      break;
+    }
+    case 'notActive': {
+      finalTodos = todos.filter((todo) => todo.status === 'inactive');
+      break;
+    }
+    case 'completed': {
+      finalTodos = todos.filter((todo) => todo.status === 'completed');
+      break;
+    }
+    case 'tooLate': {
+      finalTodos = todos.filter((todo) => dayjs(todo.end).isBefore(dayjs()));
+      break;
+    }
+    case 'whichWillCome': {
+      finalTodos = todos.filter((todo) => dayjs(todo.start).isAfter(dayjs()));
+      break;
+    }
+  }
+  console.log(finalTodos);
+  dispatch(changeTodos({ todos, dataFilter: finalTodos }));
 };

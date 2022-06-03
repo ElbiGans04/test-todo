@@ -16,6 +16,7 @@ import {
   completed,
   CONSTANT_KIND_FILTER,
   notActive,
+  preparedChangeTodos,
   preparedUpdateTodo,
   todoFilterSelector,
   todosDataSelector,
@@ -233,7 +234,7 @@ function Todos({ setRefetch, refetch, auth }) {
 
       const requestJson = await request.json();
 
-      dispatch(changeTodos({ todos: requestJson.data }));
+      dispatch(preparedChangeTodos(requestJson.data));
       dispatch(success({ message: null }));
     }
 
