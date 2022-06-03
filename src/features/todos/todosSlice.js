@@ -25,6 +25,9 @@ export const todosSlice = createSlice({
       state.dataFilter = action.payload.todos;
       state['filter'] = 'all';
     },
+    updateTodo: (state, action) => {
+      state.data[action.payload.index] = action.payload.todo;
+    },
     all: (state) => {
       state['filter'] = 'all';
       state['dataFilter'] = state.data;
@@ -54,6 +57,7 @@ export const todosSlice = createSlice({
 
 export const {
   changeTodos,
+  updateTodo,
   all,
   active,
   notActive,
@@ -75,3 +79,9 @@ export const todoFilterSelector = (id) =>
   createSelector(todosDataFilterSelector, (todos) =>
     todos.find((todo) => todo.id === id),
   );
+
+export const preparedUpdateTodo = (data, id) => (dispatch, getState) => {
+  const { todos } = getState();
+  const indexMatch = todos.data.findIndex((todo) => todo.id === id);
+  dispatch(updateTodo({ index: indexMatch, todo: data }));
+};
