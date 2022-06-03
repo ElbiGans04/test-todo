@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { AiFillDelete, AiOutlineLoading } from 'react-icons/ai';
@@ -10,20 +9,13 @@ import {
   success,
 } from '../src/features/status/statusSlice';
 import {
-  active,
-  all,
-  changeTodos,
-  completed,
   CONSTANT_KIND_FILTER,
-  notActive,
+  preparedChangeFilter,
   preparedChangeTodos,
   preparedUpdateTodo,
   todoFilterSelector,
-  todosDataSelector,
   todosFilterSelector,
   todosIdFilterSelector,
-  tooLate,
-  whichWillCome,
 } from '../src/features/todos/todosSlice';
 import useAuth from '../src/hooks/useAuth';
 export default function Home() {
@@ -121,7 +113,6 @@ export default function Home() {
 function Header({ setRefetch, refetch }) {
   const filter = useSelector(todosFilterSelector);
   const status = useSelector(statusSelector);
-  const todos = useSelector(todosDataSelector);
   const dispatch = useDispatch();
   /* 
     Event Handler
@@ -131,40 +122,7 @@ function Header({ setRefetch, refetch }) {
     if (!CONSTANT_KIND_FILTER.includes(optionValue)) return false;
 
     // By Condition
-    switch (optionValue) {
-      case 'all':
-        dispatch(all());
-        break;
-      case 'active': {
-        const finalTodos = todos.filter((todo) => todo.status === 'active');
-        dispatch(active({ todos: finalTodos }));
-        break;
-      }
-      case 'notActive': {
-        const finalTodos = todos.filter((todo) => todo.status === 'inactive');
-        dispatch(notActive({ todos: finalTodos }));
-        break;
-      }
-      case 'completed': {
-        const finalTodos = todos.filter((todo) => todo.status === 'completed');
-        dispatch(completed({ todos: finalTodos }));
-        break;
-      }
-      case 'tooLate': {
-        const finalTodos = todos.filter((todo) =>
-          dayjs(todo.end).isBefore(dayjs()),
-        );
-        dispatch(tooLate({ todos: finalTodos }));
-        break;
-      }
-      case 'whichWillCome': {
-        const finalTodos = todos.filter((todo) =>
-          dayjs(todo.start).isAfter(dayjs()),
-        );
-        dispatch(whichWillCome({ todos: finalTodos }));
-        break;
-      }
-    }
+    dispatch(preparedChangeFilter(optionValue));
   };
 
   return (

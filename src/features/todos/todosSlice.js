@@ -159,6 +159,54 @@ export const preparedChangeTodos = (todos) => (dispatch, getState) => {
       break;
     }
   }
-  console.log(finalTodos);
+
   dispatch(changeTodos({ todos, dataFilter: finalTodos }));
+};
+
+export const preparedChangeFilter = (filter) => (dispatch, getState) => {
+  const {
+    todos: { data },
+  } = getState();
+
+  switch (filter) {
+    case 'all':
+      dispatch(all());
+      break;
+    case 'active': {
+      dispatch(
+        active({ todos: data.filter((todo) => todo.status === 'active') }),
+      );
+      break;
+    }
+    case 'notActive': {
+      dispatch(
+        notActive({ todos: data.filter((todo) => todo.status === 'inactive') }),
+      );
+      break;
+    }
+    case 'completed': {
+      dispatch(
+        completed({
+          todos: data.filter((todo) => todo.status === 'completed'),
+        }),
+      );
+      break;
+    }
+    case 'tooLate': {
+      dispatch(
+        tooLate({
+          todos: data.filter((todo) => dayjs(todo.end).isBefore(dayjs())),
+        }),
+      );
+      break;
+    }
+    case 'whichWillCome': {
+      dispatch(
+        whichWillCome({
+          todos: data.filter((todo) => dayjs(todo.start).isAfter(dayjs())),
+        }),
+      );
+      break;
+    }
+  }
 };
