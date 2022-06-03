@@ -1,5 +1,5 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
-
+import dayjs from 'dayjs';
 export const CONSTANT_KIND_FILTER = [
   'all',
   'active',
@@ -29,6 +29,7 @@ export const todosSlice = createSlice({
       const newState = [...state.data];
       newState[action.payload.index] = action.payload.todo;
       state.data = newState;
+      state.dataFilter = action.payload.dataFilter;
     },
     all: (state) => {
       state['filter'] = 'all';
@@ -85,5 +86,45 @@ export const todoFilterSelector = (id) =>
 export const preparedUpdateTodo = (data, id) => (dispatch, getState) => {
   const { todos } = getState();
   const indexMatch = todos.data.findIndex((todo) => todo.id === id);
-  dispatch(updateTodo({ index: indexMatch, todo: data }));
+  let finalTodos = [];
+
+  switch (todos.filter) {
+    case 'all':
+      finalTodos = [...todos.data];
+      break;
+    case 'active': {
+      finalTodos = todos.data.filter(
+        (todo) => todo.status === 'active' && todo.id !== id,
+      );
+      break;
+    }
+    case 'notActive': {
+      finalTodos = todos.data.filter(
+        (todo) => todo.status === 'inactive' && todo.id !== id,
+      );
+      break;
+    }
+    case 'completed': {
+      finalTodos = todos.data.filter(
+        (todo) => todo.status === 'completed' && todo.id !== id,
+      );
+      break;
+    }
+    case 'tooLate': {
+      finalTodos = todos.data.filter((todo) =>
+        dayjs(todo.end).isBefore(dayjs()),
+      );
+      break;
+    }
+    case 'whichWillCome': {
+      finalTodos = todos.data.filter((todo) =>
+        dayjs(todo.start).isAfter(dayjs()),
+      );
+      break;
+    }
+  }
+
+  dispatch(
+    updateTodo({ index: indexMatch, todo: data, dataFilter: finalTodos }),
+  );
 };
