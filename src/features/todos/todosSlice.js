@@ -26,7 +26,9 @@ export const todosSlice = createSlice({
       state['filter'] = 'all';
     },
     updateTodo: (state, action) => {
-      state.data[action.payload.index] = action.payload.todo;
+      const newState = [...state.data];
+      newState[action.payload.index] = action.payload.todo;
+      state.data = newState;
     },
     all: (state) => {
       state['filter'] = 'all';
