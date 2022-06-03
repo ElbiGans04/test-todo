@@ -90,7 +90,7 @@ export default function Register() {
   });
 
   return (
-    <React.Fragment>
+    <div className="w-11/12 mx-auto">
       <div
         ref={ref}
         style={{
@@ -232,6 +232,6 @@ export default function Register() {
           </p>
         </div>
       </form>
-    </React.Fragment>
+    </div>
   );
 }

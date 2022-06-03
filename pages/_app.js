@@ -10,7 +10,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <Provider store={store}>
       <NP options={{ showSpinner: false }} />
-      <div className="min-h-screen px-10 overflow-x-hidden font-sans md:px-14 lg:px-24 xl:px-28 text-slate-300 w-100 bg-slate-900">
+      <div className="min-h-screen overflow-x-hidden font-sans text-slate-300 w-100 bg-slate-900">
         <Header />
         <Component {...pageProps} />
         <footer className="flex items-center justify-center py-5 mt-10 border-t-2 border-slate-800">

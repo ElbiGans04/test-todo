@@ -23,7 +23,7 @@ export default function Home() {
   const [refetch, setRefetch] = useState(true);
 
   return (
-    <div className="grid w-full h-full gap-5 grid-columns-10">
+    <div className="grid w-11/12 mx-auto h-full gap-5 grid-columns-10">
       <Head>
         <title>Todolist</title>
       </Head>
@@ -126,15 +126,15 @@ function Header({ setRefetch, refetch }) {
   };
 
   return (
-    <div className="flex justify-between w-full p-5 rounded bg-slate-800">
+    <div className="w-full p-2 md:p-4 rounded bg-slate-800 grid gap-3 md:gap-10 lg:gap-28 grid-cols-1 grid-rows-2 sm:grid-cols-2 sm:grid-rows-1">
       <button className="px-1 py-1 font-bold rounded-md shadow-md md:px-5 md:py-2 hover:bg-slate-700 bg-slate-900">
         Add Todo
       </button>
 
-      <div className="flex items-center">
+      <div className="grid grid-cols-1 grid-rows-2 gap-3 sm:grid-cols-2 sm:grid-rows-1">
         <button
           onClick={() => setRefetch(true)}
-          className="flex items-center justify-between px-3 py-1 font-bold rounded-md shadow-md bg-slate-900 md:px-5 md:py-2 hover:bg-slate-700"
+          className="flex items-center justify-center md:justify-between px-3 py-1 font-bold rounded-md shadow-md bg-slate-900 md:px-5 md:py-2 hover:bg-slate-700"
         >
           <span
             className={
@@ -150,7 +150,7 @@ function Header({ setRefetch, refetch }) {
         <select
           value={filter}
           onChange={handler}
-          className="ml-5 border-0 rounded hover:bg-slate-700 bg-slate-900 focus:outline-0"
+          className=" border-0 rounded hover:bg-slate-700 bg-slate-900 focus:outline-0"
         >
           {CONSTANT_KIND_FILTER.map((val) => {
             return (
@@ -298,11 +298,11 @@ function Todo({ id, auth }) {
             Mark This Todo done
           </label>
         </div>
-        <div className="flex items-center mt-3 md:mt-0">
-          <button className="flex items-center justify-between px-3 py-1 mr-2 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
+        <div className="grid grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1 gap-2 mt-3 md:mt-0">
+          <button className="flex items-center justify-center md:justify-between px-3 py-1 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
             <AiFillDelete className="mr-1"></AiFillDelete>Delete
           </button>
-          <button className="flex items-center justify-between px-3 py-1 font-bold rounded-md shadow-md bg-sky-700 md:px-5 md:py-2 hover:bg-sky-600">
+          <button className="flex items-center justify-center md:justify-between px-3 py-1 font-bold rounded-md shadow-md bg-sky-700 md:px-5 md:py-2 hover:bg-sky-600">
             <AiFillDelete className="mr-1"></AiFillDelete>Update
           </button>
         </div>

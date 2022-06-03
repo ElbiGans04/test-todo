@@ -80,7 +80,7 @@ export default function Login() {
   });
 
   return (
-    <React.Fragment>
+    <div className="w-11/12 mx-auto">
       <div
         ref={ref}
         style={{
@@ -182,6 +182,6 @@ export default function Login() {
           </p>
         </div>
       </form>
-    </React.Fragment>
+    </div>
   );
 }
