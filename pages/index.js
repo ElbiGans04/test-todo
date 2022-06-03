@@ -278,9 +278,6 @@ function Todo({ id }) {
         </div>
         <div className="flex items-center mt-3 md:mt-0">
           <button className="flex items-center justify-between px-3 py-1 mr-2 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
-            <AiFillEye className="mr-1"></AiFillEye>Active
-          </button>
-          <button className="flex items-center justify-between px-3 py-1 mr-2 font-bold bg-red-700 rounded-md shadow-md md:px-5 md:py-2 hover:bg-red-600">
             <AiFillDelete className="mr-1"></AiFillDelete>Delete
           </button>
           <button className="flex items-center justify-between px-3 py-1 font-bold rounded-md shadow-md bg-sky-700 md:px-5 md:py-2 hover:bg-sky-600">
