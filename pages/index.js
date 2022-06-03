@@ -1,33 +1,30 @@
+import dayjs from 'dayjs';
 import Head from 'next/head';
-import { RiPencilLine } from 'react-icons/ri';
-import { AiFillEye, AiFillDelete, AiOutlineLoading } from 'react-icons/ai';
-import useAuth from '../src/hooks/useAuth';
+import { useEffect, useState } from 'react';
+import { AiFillDelete, AiOutlineLoading } from 'react-icons/ai';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  CONSTANT_KIND_FILTER,
-  all,
+  error,
+  loading,
+  statusSelector,
+  success,
+} from '../src/features/status/statusSlice';
+import {
   active,
-  notActive,
+  all,
+  changeTodos,
   completed,
+  CONSTANT_KIND_FILTER,
+  notActive,
+  preparedUpdateTodo,
+  todoFilterSelector,
+  todosDataSelector,
+  todosFilterSelector,
+  todosIdFilterSelector,
   tooLate,
   whichWillCome,
-  todosFilterSelector,
-  todosDataFilterSelector,
-  todosDataSelector,
-  changeTodos,
-  todosIdFilterSelector,
-  todoFilterSelector,
 } from '../src/features/todos/todosSlice';
-import {
-  statusSelector,
-  loading,
-  success,
-  iddle,
-  error,
-} from '../src/features/status/statusSlice';
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { createSelector } from '@reduxjs/toolkit';
-import dayjs from 'dayjs';
+import useAuth from '../src/hooks/useAuth';
 export default function Home() {
   const auth = useAuth(false, '/login');
   const [refetch, setRefetch] = useState(true);
@@ -245,20 +242,84 @@ function Todos({ setRefetch, refetch, auth }) {
   return (
     <div className="grid gap-5">
       {todosIdVal.map((val, idx) => {
-        return <Todo key={val} id={val} />;
+        return <Todo auth={auth} key={val} id={val} />;
       })}
     </div>
   );
 }
 
-function Todo({ id }) {
+function Todo({ id, auth }) {
   const dispatch = useDispatch();
   const todoVal = useSelector(todoFilterSelector(id));
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    function checked() {
+      if (!todoVal) return;
+      setChecked(todoVal.status === 'completed' ? true : false);
+    }
+
+    checked();
+  }, [todoVal]);
+
+  /* Event Handler */
+  const checkboxEventHandler = (id) => {
+    async function patchTodo() {
+      dispatch(loading());
+
+      const request = await fetch(
+        `https://todos.data.my.id/api/todos/updatestatus/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.user.token}`,
+          },
+          body: new URLSearchParams({
+            status: checked ? 'active' : 'completed',
+          }),
+          method: 'PATCH',
+        },
+      );
+
+      if (!request.ok)
+        return dispatch(
+          error({ message: 'Error When trying to change todo status' }),
+        );
+
+      const requestJson = await request.json();
+
+      if (requestJson.message !== 'Update Status Success')
+        return dispatch(
+          error({ message: 'Error When trying to change todo status' }),
+        );
+
+      // how to update state.data ?
+      setChecked((state) => !state);
+      dispatch(
+        preparedUpdateTodo(
+          { ...todoVal, status: checked ? 'active' : 'completed' },
+          id,
+        ),
+      );
+      dispatch(success({ message: null }));
+    }
+
+    patchTodo().catch((err) => console.error(err));
+  };
 
   return (
-    <div className="relative grid gap-10 p-5 rounded bg-slate-800">
+    <div
+      className={
+        'relative grid gap-10 p-5 rounded bg-slate-800 ' +
+        (checked ? 'opacity-50' : '')
+      }
+    >
       <div>
-        <h1 className="mb-3 text-xl font-bold lg:text-3xl md:text-2xl">
+        <h1
+          className={
+            'mb-3 text-xl font-bold lg:text-3xl md:text-2xl ' +
+            (checked ? 'line-through' : '')
+          }
+        >
           {todoVal.title}
         </h1>
         <p className="text-base md:text-md lg:text-xl ">
@@ -271,6 +332,8 @@ function Todo({ id }) {
             id={`finsih-${id}`}
             type="checkbox"
             className="flex-col lg:w-5 lg:h-5 w-4 h-4 mr-3 rounded-[50%] focus:ring-offset-0 focus:border-0"
+            checked={checked}
+            onChange={() => checkboxEventHandler(todoVal.id)}
           />
           <label className="text-sm md:text-md" htmlFor={`finsih-${id}`}>
             Mark This Todo done
