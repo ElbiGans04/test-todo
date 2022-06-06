@@ -145,13 +145,13 @@ function Todos({ auth }) {
         </div>
       )}
       {todosIdVal.map((val, idx) => {
-        return <Todo auth={auth} key={val} id={val} />;
+        return <Todo status={status} auth={auth} key={val} id={val} />;
       })}
     </div>
   );
 }
 
-function Todo({ id, auth }) {
+function Todo({ id, auth, status }) {
   const dispatch = useDispatch();
   const todoVal = useSelector(todoFilterSelector(id));
   const [checked, setChecked] = useState(false);
@@ -167,6 +167,7 @@ function Todo({ id, auth }) {
 
   /* Event Handler */
   const checkboxEventHandler = (id) => {
+    if (status.name === 'loading') return;
     async function patchTodo() {
       dispatch(loading());
 
