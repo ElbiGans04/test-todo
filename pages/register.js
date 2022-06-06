@@ -69,11 +69,8 @@ export default function Register() {
 
       const requestDoc = await request.json();
 
-      if (
-        Array.isArray(requestDoc.email) &&
-        requestDoc.email[0] === 'The email has already been taken.'
-      )
-        throw new Error('The email has already been taken');
+      if (request.status === 200)
+        return dispatch(parseErrorMessage(requestDoc));
 
       alert('SUCCESS REGISTER. WILL REDIRECT');
       dispatch(iddle());
@@ -235,4 +232,12 @@ export default function Register() {
       </form>
     </div>
   );
+}
+
+function parseErrorMessage(doc) {
+  return error({
+    message: Object.entries(doc)
+      .map((val) => `${val[0]}: ${val[1]}`)
+      .join(', '),
+  });
 }
