@@ -25,7 +25,11 @@ const schema = Yup.object({
   password: Yup.string()
     .min(5, 'MIN 5 LENGTH')
     .max(100, 'MAX 100 LENGTH')
-    .required('PLEASE INSERT YOUR PASSWORD'),
+    .required('PLEASE INSERT YOUR PASSWORD')
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+      `please enter a password with a minimum length of 8 letters, consisting of at least one letter, at least one number and at least one special letter`,
+    ),
 }).required();
 /* password
       .matches(
