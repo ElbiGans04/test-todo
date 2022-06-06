@@ -282,6 +282,7 @@ function SwitchModal({ auth }) {
   */
   const handler = async (data) => {
     try {
+      // return console.log(data)
       if (!modal.type || !status.name === 'loading') return;
       dispatch(loading());
 
@@ -323,6 +324,7 @@ function SwitchModal({ auth }) {
             return dispatch(parseErrorMessage(requestDoc));
           }
 
+          dispatch(runRefetch());
           dispatch(success({ message: 'SUCCESS ADD TODO' }));
           break;
         }
@@ -345,6 +347,7 @@ function SwitchModal({ auth }) {
             return dispatch(parseErrorMessage(requestDoc));
           }
 
+          dispatch(runRefetch());
           dispatch(success({ message: 'SUCCESS UPDATE TODO' }));
           break;
         }
@@ -367,6 +370,7 @@ function SwitchModal({ auth }) {
             return dispatch(parseErrorMessage(requestDoc));
           }
 
+          dispatch(runRefetch());
           dispatch(success({ message: 'SUCCESS DELETE TODO' }));
           break;
         }
