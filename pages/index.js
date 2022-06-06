@@ -58,9 +58,8 @@ export default function Home() {
 
 function Header() {
   const filter = useSelector(todosFilterSelector);
-  const status = useSelector(statusSelector);
   const dispatch = useDispatch();
-  const refetch = useSelector(todosRefetchSelector);
+
   /* 
     Event Handler
   */
@@ -86,15 +85,6 @@ function Header() {
           onClick={() => dispatch(runRefetch())}
           className="flex items-center justify-center px-3 py-1 font-bold rounded-md shadow-md md:justify-between bg-slate-900 md:px-5 md:py-2 hover:bg-slate-700"
         >
-          <span
-            className={
-              status.name === 'loading' && refetch
-                ? 'mr-3 animate-spin'
-                : 'mr-3'
-            }
-          >
-            <AiOutlineLoading />
-          </span>
           Reload Todos
         </button>
         <select
@@ -151,6 +141,11 @@ function Todos({ auth }) {
   }, [auth, dispatch, refetch, status]);
   return (
     <div className="grid gap-5">
+      {(status.name === 'loading' || refetch) && (
+        <div className="flex justify-center p-3 text-3xl lg:text-4xl">
+          <AiOutlineLoading className="animate-spin" />
+        </div>
+      )}
       {todosIdVal.map((val, idx) => {
         return <Todo auth={auth} key={val} id={val} />;
       })}
