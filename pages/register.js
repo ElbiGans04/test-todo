@@ -15,6 +15,7 @@ import {
 import { useSelector } from 'react-redux';
 import React, { useState, useRef } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
+import parseErrorMessage from '../src/lib/parseError';
 
 const schema = Yup.object({
   name: Yup.string()
@@ -232,12 +233,4 @@ export default function Register() {
       </form>
     </div>
   );
-}
-
-function parseErrorMessage(doc) {
-  return error({
-    message: Object.entries(doc)
-      .map((val) => `${val[0]}: ${val[1]}`)
-      .join(', '),
-  });
 }

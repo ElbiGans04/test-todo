@@ -34,6 +34,7 @@ import {
   useFormContext,
   useFormState,
 } from 'react-hook-form';
+import parseErrorMessage from '../src/lib/parseError';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 dayjs.extend(isSameOrAfter);
@@ -701,12 +702,4 @@ async function makeRequestAction(setting, setShowMessage) {
     request,
     requestDoc: doc,
   };
-}
-
-function parseErrorMessage(doc) {
-  return error({
-    message: Object.entries(doc)
-      .map((val) => `${val[0]}: ${val[1]}`)
-      .join(', '),
-  });
 }
