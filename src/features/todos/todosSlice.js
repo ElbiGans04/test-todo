@@ -13,6 +13,7 @@ const initialState = {
   data: [],
   dataFilter: [],
   filter: CONSTANT_KIND_FILTER[0],
+  refetch: true,
 };
 
 export const todosSlice = createSlice({
@@ -29,6 +30,12 @@ export const todosSlice = createSlice({
       newState[action.payload.index] = action.payload.todo;
       state.data = newState;
       state.dataFilter = action.payload.dataFilter;
+    },
+    runRefetch: (state) => {
+      state.refetch = true;
+    },
+    stopRefetch: (state) => {
+      state.refetch = false;
     },
     all: (state) => {
       state['filter'] = 'all';
@@ -60,6 +67,8 @@ export const todosSlice = createSlice({
 export const {
   changeTodos,
   updateTodo,
+  runRefetch,
+  stopRefetch,
   all,
   active,
   notActive,
@@ -70,6 +79,7 @@ export const {
 export default todosSlice.reducer;
 
 export const todosSelector = (state) => state.todos;
+export const todosRefetchSelector = (state) => state.todos.refetch;
 export const todosFilterSelector = (state) => state.todos.filter;
 export const todosDataSelector = (state) => state.todos.data;
 export const todosDataFilterSelector = (state) => state.todos.dataFilter;

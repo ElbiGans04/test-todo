@@ -13,9 +13,12 @@ import {
   preparedChangeFilter,
   preparedChangeTodos,
   preparedUpdateTodo,
+  runRefetch,
+  stopRefetch,
   todoFilterSelector,
   todosFilterSelector,
   todosIdFilterSelector,
+  todosRefetchSelector,
 } from '../src/features/todos/todosSlice';
 import {
   close,
@@ -37,7 +40,6 @@ dayjs.extend(isSameOrAfter);
 
 export default function Home() {
   const auth = useAuth(false, '/login');
-  const [refetch, setRefetch] = useState(true);
 
   return (
     <div className="grid w-11/12 h-full gap-5 mx-auto grid-columns-10">
@@ -48,16 +50,17 @@ export default function Home() {
       {/* Modal */}
       <SwitchModal auth={auth} />
 
-      <Header refetch={refetch} setRefetch={setRefetch} />
-      <Todos refetch={refetch} setRefetch={setRefetch} auth={auth} />
+      <Header />
+      <Todos auth={auth} />
     </div>
   );
 }
 
-function Header({ setRefetch, refetch }) {
+function Header() {
   const filter = useSelector(todosFilterSelector);
   const status = useSelector(statusSelector);
   const dispatch = useDispatch();
+  const refetch = useSelector(todosRefetchSelector);
   /* 
     Event Handler
   */
@@ -80,7 +83,7 @@ function Header({ setRefetch, refetch }) {
 
       <div className="grid grid-cols-1 grid-rows-2 gap-3 sm:grid-cols-2 sm:grid-rows-1">
         <button
-          onClick={() => setRefetch(true)}
+          onClick={() => dispatch(runRefetch())}
           className="flex items-center justify-center px-3 py-1 font-bold rounded-md shadow-md md:justify-between bg-slate-900 md:px-5 md:py-2 hover:bg-slate-700"
         >
           <span
@@ -112,10 +115,11 @@ function Header({ setRefetch, refetch }) {
   );
 }
 
-function Todos({ setRefetch, refetch, auth }) {
+function Todos({ auth }) {
   const dispatch = useDispatch();
   const todosIdVal = useSelector(todosIdFilterSelector);
   const status = useSelector(statusSelector);
+  const refetch = useSelector(todosRefetchSelector);
 
   useEffect(() => {
     async function fetchData() {
@@ -123,7 +127,7 @@ function Todos({ setRefetch, refetch, auth }) {
       if (status.name !== 'iddle' && status.name !== 'success') return;
       if (!refetch) return;
 
-      setRefetch(false);
+      dispatch(stopRefetch());
       dispatch(loading());
 
       const request = await fetch('https://todos.data.my.id/api/todos', {
@@ -144,7 +148,7 @@ function Todos({ setRefetch, refetch, auth }) {
     }
 
     fetchData().catch((err) => console.error(err));
-  }, [auth, dispatch, refetch, setRefetch, status]);
+  }, [auth, dispatch, refetch, status]);
   return (
     <div className="grid gap-5">
       {todosIdVal.map((val, idx) => {
