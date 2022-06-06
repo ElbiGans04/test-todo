@@ -324,7 +324,6 @@ function SwitchModal({ auth }) {
             return dispatch(parseErrorMessage(requestDoc));
           }
 
-          dispatch(runRefetch());
           dispatch(success({ message: 'SUCCESS ADD TODO' }));
           break;
         }
@@ -347,7 +346,6 @@ function SwitchModal({ auth }) {
             return dispatch(parseErrorMessage(requestDoc));
           }
 
-          dispatch(runRefetch());
           dispatch(success({ message: 'SUCCESS UPDATE TODO' }));
           break;
         }
@@ -370,7 +368,6 @@ function SwitchModal({ auth }) {
             return dispatch(parseErrorMessage(requestDoc));
           }
 
-          dispatch(runRefetch());
           dispatch(success({ message: 'SUCCESS DELETE TODO' }));
           break;
         }
@@ -383,6 +380,7 @@ function SwitchModal({ auth }) {
   };
 
   const closeHandler = () => {
+    dispatch(runRefetch());
     setShowMessage(false);
     dispatch(close());
   };
