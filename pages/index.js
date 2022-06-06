@@ -275,8 +275,7 @@ function SwitchModal({ auth }) {
   */
   const handler = async (data) => {
     try {
-      // return console.log(data)
-      if (!modal.type || !status.name === 'loading') return;
+      if (!modal.type || status.name === 'loading') return;
       dispatch(loading());
 
       const url =
