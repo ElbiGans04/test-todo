@@ -47,36 +47,34 @@ export default function Login() {
   /* 
     Event Handler
   */
-  const formHandler = handleSubmit((data) => {
-    if (status.name === 'loading') return;
+  const formHandler = handleSubmit(async (data) => {
+    try {
+      if (status.name === 'loading') return;
 
-    dispatch(loading());
-    fetch('https://todos.data.my.id/api/login', {
-      method: 'POST',
-      body: new URLSearchParams(data),
-    })
-      .then((res) => {
-        if (!res.ok && res.status === 401)
-          throw new Error('WRONG EMAIL OR PASSWORD');
-        return res.json();
-      })
-      .then((res) => {
-        alert('SUCCESS LOGIN. WILL REDIRECT');
-        dispatch(iddle());
-        dispatch(
-          login({
-            token: res.access_token,
-            name: res.data.name,
-            email: res.data.email,
-          }),
-        );
-      })
-      .catch((err) => {
-        dispatch(
-          error({ message: err.message || 'Error Happend when request' }),
-        );
-        setShowMessage(true);
+      dispatch(loading());
+      const request = await fetch('https://todos.data.my.id/api/login', {
+        method: 'POST',
+        body: new URLSearchParams(data),
       });
+
+      if (!request.ok && request.status === 401)
+        throw new Error('WRONG EMAIL OR PASSWORD');
+
+      const reqDoc = await request.json();
+
+      alert('SUCCESS LOGIN. WILL REDIRECT');
+      dispatch(iddle());
+      dispatch(
+        login({
+          token: reqDoc.access_token,
+          name: reqDoc.data.name,
+          email: reqDoc.data.email,
+        }),
+      );
+    } catch (err) {
+      dispatch(error({ message: err.message || 'Error Happend when request' }));
+      setShowMessage(true);
+    }
   });
 
   return (
