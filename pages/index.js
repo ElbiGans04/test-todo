@@ -467,7 +467,7 @@ function ModalContent() {
 
   useEffect(() => {
     function resetFields() {
-      if (!modal.type) return;
+      if (!modal.type && !todo) return;
 
       switch (modal.type) {
         case 'add': {
