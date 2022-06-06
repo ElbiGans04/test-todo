@@ -304,77 +304,63 @@ function SwitchModal({ auth }) {
 
       switch (modal.type) {
         case 'add': {
-          const request = await fetch(url, {
-            ...options,
-            method: 'POST',
-          });
+          const { request, requestDoc } = await makeRequestAction(
+            {
+              url,
+              options: {
+                ...options,
+                method: 'POST',
+              },
+            },
+            setShowMessage,
+          );
 
-          if (!request.ok) throw new Error('Request Failed');
-
-          const doc = await request.json();
-          setShowMessage(true);
-
-          if (request.status === 200 && doc?.message !== 'success') {
-            return dispatch(
-              error({
-                message: Object.entries(doc)
-                  .map((val) => `${val[0]}: ${val[1]}`)
-                  .join(', '),
-              }),
-            );
+          if (request.status === 200 && requestDoc?.message !== 'success') {
+            return dispatch(parseErrorMessage(requestDoc));
           }
 
           dispatch(success({ message: 'SUCCESS ADD TODO' }));
           break;
         }
         case 'update': {
-          const request = await fetch(url, {
-            ...options,
-            method: 'PATCH',
-          });
-
-          if (!request.ok) throw new Error('Request Failed');
-
-          const doc = await request.json();
-
-          setShowMessage(true);
+          const { request, requestDoc } = await makeRequestAction(
+            {
+              url,
+              options: {
+                ...options,
+                method: 'PATCH',
+              },
+            },
+            setShowMessage,
+          );
 
           if (
             request.status === 200 &&
-            doc?.message !== 'Update Data Success'
+            requestDoc?.message !== 'Update Data Success'
           ) {
-            return dispatch(
-              error({
-                message: Object.entries(doc)
-                  .map((val) => `${val[0]}: ${val[1]}`)
-                  .join(', '),
-              }),
-            );
+            return dispatch(parseErrorMessage(requestDoc));
           }
 
           dispatch(success({ message: 'SUCCESS UPDATE TODO' }));
           break;
         }
         case 'delete': {
-          const request = await fetch(url, {
-            ...options,
-            method: 'DELETE',
-          });
+          const { request, requestDoc } = await makeRequestAction(
+            {
+              url,
+              options: {
+                ...options,
+                method: 'DELETE',
+              },
+            },
+            setShowMessage,
+          );
 
-          if (!request.ok) throw new Error('Request Failed');
-
-          const doc = await request.json();
-
-          setShowMessage(true);
-
-          if (request.status === 200 && doc?.message !== 'Deleted Success') {
-            return dispatch(
-              error({
-                message: Object.entries(doc)
-                  .map((val) => `${val[0]}: ${val[1]}`)
-                  .join(', '),
-              }),
-            );
+          if (
+            request.status === 200 &&
+            requestDoc?.message !== 'Deleted Success'
+          ) {
+            return dispatch(parseErrorMessage(requestDoc));
           }
 
           dispatch(success({ message: 'SUCCESS DELETE TODO' }));
@@ -701,4 +687,27 @@ function ModalContent() {
       </div>
     </React.Fragment>
   );
+}
+
+async function makeRequestAction(setting, setShowMessage) {
+  const request = await fetch(setting.url, setting.options);
+
+  if (!request.ok) throw new Error('Request Failed');
+
+  const doc = await request.json();
+
+  setShowMessage(true);
+
+  return {
+    request,
+    requestDoc: doc,
+  };
+}
+
+function parseErrorMessage(doc) {
+  return error({
+    message: Object.entries(doc)
+      .map((val) => `${val[0]}: ${val[1]}`)
+      .join(', '),
+  });
 }
