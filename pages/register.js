@@ -53,40 +53,41 @@ export default function Register() {
     Event Handler
   */
 
-  const formHandler = handleSubmit((data) => {
-    if (status.name === 'loading') return;
-    dispatch(loading());
-    fetch('https://todos.data.my.id/api/register', {
-      method: 'POST',
-      body: new URLSearchParams(data),
-    })
-      .then((res) => {
-        if (!res.ok && res.status === 401)
-          throw new Error('WRONG EMAIL OR PASSWORD');
-        return res.json();
-      })
-      .then((res) => {
-        if (
-          Array.isArray(res.email) &&
-          res.email[0] === 'The email has already been taken.'
-        )
-          throw new Error('The email has already been taken');
-        alert('SUCCESS REGISTER. WILL REDIRECT');
-        dispatch(iddle());
-        dispatch(
-          login({
-            token: res.access_token,
-            name: res.data.name,
-            email: res.data.email,
-          }),
-        );
-      })
-      .catch((err) => {
-        dispatch(
-          error({ message: err.message || 'Error Happend when request' }),
-        );
-        setShowMessage(true);
+  const formHandler = handleSubmit(async (data) => {
+    try {
+      if (status.name === 'loading') return;
+
+      dispatch(loading());
+
+      const request = await fetch('https://todos.data.my.id/api/register', {
+        method: 'POST',
+        body: new URLSearchParams(data),
       });
+
+      if (!request.ok && request.status === 401)
+        throw new Error('WRONG EMAIL OR PASSWORD');
+
+      const requestDoc = await request.json();
+
+      if (
+        Array.isArray(requestDoc.email) &&
+        requestDoc.email[0] === 'The email has already been taken.'
+      )
+        throw new Error('The email has already been taken');
+
+      alert('SUCCESS REGISTER. WILL REDIRECT');
+      dispatch(iddle());
+      dispatch(
+        login({
+          token: requestDoc.access_token,
+          name: requestDoc.data.name,
+          email: requestDoc.data.email,
+        }),
+      );
+    } catch (err) {
+      dispatch(error({ message: err.message || 'Error Happend when request' }));
+      setShowMessage(true);
+    }
   });
 
   return (
