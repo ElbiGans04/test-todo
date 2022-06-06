@@ -113,9 +113,7 @@ function Todos({ auth }) {
 
   useEffect(() => {
     async function fetchData() {
-      if (!auth.isLogin) return;
-      if (status.name !== 'iddle' && status.name !== 'success') return;
-      if (!refetch) return;
+      if (!auth.isLogin || status.name === 'loading' || !refetch) return;
 
       dispatch(stopRefetch());
       dispatch(loading());
